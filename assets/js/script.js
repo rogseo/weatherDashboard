@@ -56,7 +56,7 @@ var renderCurrentWeather = function (searchCity,currentMainTemp, currentWind, cu
 	var currentWeather_elm=$("#currentWeather");
 	$(currentWeather_elm).empty();
 	var today=moment().format("MM/DD/YYYY ddd");
-	var currentWeatherText=searchCity+today;
+	var currentWeatherText=searchCity+" " +today;
 	$(current_h1).text(currentWeatherText);
 	currentWeather_elm.append(current_h1);
 
@@ -90,14 +90,15 @@ var getWeatherData = function (apiUrl_getWeather) {
 			console.log(data);
 			var cityName = data.city.name;
 
-			//  var weatherBox=$("#weatherbox-container");
-			//  $(weatherBox).innerText("");  //init
+			 var weatherBox=$("#weatherbox-container");
+			 $(weatherBox).empty();  //init
 			var dailyWeather=[];
 
 			for (let i = 0; i < data.list.length; i++) {
 				var date = data.list[i].dt_txt;
 				var dayOfWeek = moment(date).format("ddd");
 				var hour=moment(date).format("h a");
+				console.log(hour);
 				var mainTemp = (parseFloat(data.list[i].main.temp)-273.15).toFixed(0);
 				//((K-273.15)*1.8)+32
 				var mainWind = data.list[i].wind.speed;
@@ -111,13 +112,14 @@ var getWeatherData = function (apiUrl_getWeather) {
 					mainHumidity:mainHumidity,
 					weatherIcon:weatherIcon
 				};
-				if(i% 8=== 2)
+				if(i% 8=== 3)
 				{
 					renderWeatherFor5days(dayOfWeek,hour,mainTemp,mainHumidity,mainWind,weatherIcon);
 				}
 				
 					
 				dailyWeather.push(threeHourly);
+
 				renderWeatherFor3hourly(dailyWeather);
 
 			}
@@ -142,7 +144,7 @@ var renderWeatherFor5days=function(dayOfWeek,hour,mainTemp,mainHumidity,mainWind
 
 	var div=$("<div>").addClass("col-2 weatherbox card");
 	weatherBox.append(div);
-	var date=$("<strong>").addClass("card-header").text(dayOfWeek +" "+hour);
+	var date=$("<strong>").addClass("card-header").text(dayOfWeek);
 	div.append(date);
 	var icon=$(weatherIcon);
 	date.append(icon);
