@@ -10,8 +10,7 @@ body{
     color:black;
 }
 #currentWeather{
-    /* background-color: #b4ecff;
-    color:black; */
+
 }
 .weatherbox {
     width: 200px;
@@ -48,3 +47,7 @@ body{
     display: inline-block;
    
   } 
+
+  #searchHistory{
+    border-top:gray 1px solid;
+  }

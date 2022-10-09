@@ -52,10 +52,11 @@ var getCurrentWeatherData = function (searchCity) {
 }
 
 var renderCurrentWeather = function (searchCity,currentMainTemp, currentWind, currentMainHumidity, currentWeatherIcon) {
-	var current_h1=$("<h1>");
+	var current_h1=$("<h2>");
 	var currentWeather_elm=$("#currentWeather");
+	$(currentWeather_elm).empty();
 	var today=moment().format("MM/DD/YYYY ddd");
-	var currentWeatherText=searchCity+"   "+today;
+	var currentWeatherText=searchCity+today;
 	$(current_h1).text(currentWeatherText);
 	currentWeather_elm.append(current_h1);
 
@@ -88,27 +89,40 @@ var getWeatherData = function (apiUrl_getWeather) {
 	
 			console.log(data);
 			var cityName = data.city.name;
-		
-			for (let i = 3; i < data.list.length; i=i+8) {
+
+			//  var weatherBox=$("#weatherbox-container");
+			//  $(weatherBox).innerText("");  //init
+			var dailyWeather=[];
+
+			for (let i = 0; i < data.list.length; i++) {
 				var date = data.list[i].dt_txt;
 				var dayOfWeek = moment(date).format("ddd");
+				var hour=moment(date).format("h a");
 				var mainTemp = (parseFloat(data.list[i].main.temp)-273.15).toFixed(0);
 				//((K-273.15)*1.8)+32
 				var mainWind = data.list[i].wind.speed;
 				var mainHumidity = data.list[i].main.humidity;
-
-				// var mainTempMin = data.list[i].main.temp_min;
-				// var mainTempMax = data.list[i].main.temp_max;
-				
 				var weatherIcon			=	'<img src="https://openweathermap.org/img/w/' + data.list[i].weather[0].icon + '.png">';
-
-				renderWeatherFor5days(dayOfWeek,mainTemp,mainHumidity,mainWind,weatherIcon);
-
+				var threeHourly={
+					dayOfWeek:dayOfWeek,
+					hour:hour,
+					mainTemp:mainTemp,
+					mainWind:mainWind,
+					mainHumidity:mainHumidity,
+					weatherIcon:weatherIcon
+				};
+				if(i% 8=== 2)
+				{
+					renderWeatherFor5days(dayOfWeek,hour,mainTemp,mainHumidity,mainWind,weatherIcon);
+				}
+				
+					
+				dailyWeather.push(threeHourly);
+				renderWeatherFor3hourly(dailyWeather);
 
 			}
 
 			}
-
 
 		)
 		.catch((error)=>
@@ -118,11 +132,17 @@ var getWeatherData = function (apiUrl_getWeather) {
 
 
 }
-var renderWeatherFor5days=function(dayOfWeek,mainTemp,mainHumidity,mainWind,weatherIcon){
+var renderWeatherFor3hourly=function(dailyWeather){
+	console.log("good");
+}
+;
+var renderWeatherFor5days=function(dayOfWeek,hour,mainTemp,mainHumidity,mainWind,weatherIcon){
 	var weatherBox=$("#weatherbox-container");
+	
+
 	var div=$("<div>").addClass("col-2 weatherbox card");
 	weatherBox.append(div);
-	var date=$("<strong>").addClass("card-header").text(dayOfWeek);
+	var date=$("<strong>").addClass("card-header").text(dayOfWeek +" "+hour);
 	div.append(date);
 	var icon=$(weatherIcon);
 	date.append(icon);
@@ -138,120 +158,72 @@ var renderWeatherFor5days=function(dayOfWeek,mainTemp,mainHumidity,mainWind,weat
 	
 	
 }
-// $.ajax ({
-// 	url : apiUrl_getWeather,
-// 	type: 'GET',
-// 	dataType: 'jsonp',
-// 	success: function(data) {
-// 		console.log(data);
-// 		console.log("finish");} ///// ????
-
-
-// });
-//https://api.openweathermap.org/data/2.5/weather?q=Round Rock,Texas,us&appid=51e41540f39cbd305ca8bb47b8352fce
-//api.openweathermap.org/data/2.5/forecast?lat=30.50&lon=-97.67&appid=51e41540f39cbd305ca8bb47b8352fce
-// api.openweathermap.org/data/2.5/forecast?lat=30.51&lon=-97.68&appid=51e41540f39cbd305ca8bb47b8352fce
-
-//script.js:23 api.openweathermap.org/data/2.5/forecast?lat=30.5085915&lon=-97.6788056&appid=51e41540f39cbd305ca8bb47b8352fce
-
-
-//"https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=51e41540f39cbd305ca8bb47b8352fce"
-//
-//api.openweathermap.org/data/2.5/forecast?lat=undefined&lon=undefined&appid=51e41540f39cbd305ca8bb47b8352fce
-// jQuery.ajax ({
-// 	url : apiUrl_getWeather,
-// 	type: 'GET',
-// 	dataType: 'jsonp',
-// 	success: function(data) {
-// 		console.log(data);
-// 		console.log("finish");}
-
-
-// });
-// jQuery.ajax ({
-// 	url: apiUrl,
-// 	type: 'GET',
-// 	dataType: 'jsonp',
-// 	success: function(data) {
-
-// 		console.log(data);
-// 		for(let i=0;i<data.length;i++){
-
-// 		}
-
-// 		// COORDINATES
-// 		var coordLat			=	data.coord.lat;
-// 		var coordLng			=	data.coord.lon;
-
-// 		// WEATHER
-// 		var weatherId			=	data.weather[0].id;
-// 		var weatherMain			=	data.weather[0].main;
-// 		var weatherDesc			=	data.weather[0].description;
-// 		var weatherIcon			=	'<img src="https://openweathermap.org/img/w/' + data.weather[0].icon + '.png" />';
-// 		var weatherBg			=	data.weather[0].icon;
-
-// 		// BASE
-// 		var baseData			=	data.base;
-
-// 		// TEMP
-// 		var mainTemp			=	data.main.temp;
-// 		var mainPressure		=	data.main.pressure;
-// 		var mainHumidity		=	data.main.humidity;
-// 		var mainTempMin			=	data.main.temp_min;
-// 		var mainTempMax			=	data.main.temp_max;
-
-// 		// VISIBILITY
-// 		var visibility			=	data.visibility;
-
-// 		// WIND
-// 		var windSpeed			=	data.wind.speed;
-// 		var windDeg				=	data.wind.deg;
-
-// 		// CLOUDS
-// 		var clouds				=	data.clouds.all;
-
-// 		// DT
-// 		var dt					=	data.dt;
-
-// 		// SYS
-// 		var sysType				=	data.sys.type;
-// 		var sysId				=	data.sys.id;
-// 		var sysMessage			=	data.sys.message;
-// 		var sysCountry			=	data.sys.country;
-// 		var sysSunrise			=	data.sys.sunrise;
-// 		var sysSunset			=	data.sys.sunset;
-
-// 		// ID
-// 		var id					=	data.id;
-
-// 		// NAME
-// 		var name				=	data.name;
-
-// 		// COD
-// 		var cod					=	data.cod;
-
-// 		jQuery('#city').html( name );
-// 		jQuery('#temp').html( mainTemp + '° C' );
-// 		jQuery('#desc').html( weatherDesc );
-// 	}
-
-// });
-
-// $.getJSON("city.list.json", function(json) {
-//     console.log(json); // this will show the info it in firebug console
-// });
-// 
-// fetch('city.list.json')
-//     .then((response) => response.json())
-//     .then((json) => console.log(json));
 
 $("#buttonForCity").on("click", (event) => {
 	event.preventDefault();
 	console.log("click")
 
 	var searchCity = $("#searchForCity").val();
-	getCurrentWeatherData(searchCity);
-	// console.log(apiUrl_getWeather);
-	// getWeatherData(apiUrl_getWeather); 
-});
+	if(searchCity===""){
+		return ;
+	}
 
+	getCurrentWeatherData(searchCity);
+	saveLocalStorage(searchCity);
+	renderLocalStorage();
+	$("#searchForCity").val("");
+	
+});
+var searchCityList=[];
+var saveLocalStorage=function(searchCity){
+	if(searchCity!==""){
+		//exclude the same search list
+		if(!(searchCityList.includes(searchCity))){
+			searchCityList.push(searchCity);
+			localStorage.setItem("searchCity",JSON.stringify(searchCityList));
+			console.log("save");
+		}
+		
+	}
+}
+var renderLocalStorage=function(){
+	var searchHistory=$("#searchHistory");
+	searchHistory.empty();
+	
+	
+	for(let i=0;i<searchCityList.length;i++){
+		console.log("here");
+
+		var btn=$("<button>").text(searchCityList[i]).addClass("btn btn-secondary btn-block form-group").attr("value",searchCityList[i]);
+		searchHistory.append(btn);
+
+	}
+	
+
+}
+function init(){
+	var storedSearchList=JSON.parse(localStorage.getItem("searchCity"));
+	if(storedSearchList !==null){
+		searchCityList=storedSearchList;
+	}
+	renderLocalStorage();
+}
+init();
+
+//search history button click event handler
+$("#searchHistory").on("click",(e)=>{
+	e.preventDefault();
+	console.log("click");
+	
+
+	var searchCity = $(e.target).val();
+	console.log(searchCity);
+	if(searchCity===""){
+		return ;
+	}
+
+	getCurrentWeatherData(searchCity);
+	saveLocalStorage(searchCity);
+	renderLocalStorage();
+
+});
